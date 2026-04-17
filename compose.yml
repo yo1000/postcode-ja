@@ -1,0 +1,15 @@
+services:
+  postcode-app:
+    build:
+      context: .
+      args:
+        JAR: ./target/*.jar
+    environment:
+      APP_RESOURCE_URI: file:///tmp/utf_ken_all.zip
+      # Only local
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
+    volumes:
+      - ./utf_ken_all.zip:/tmp/utf_ken_all.zip:ro
+    ports:
+      - "8080:8080"
+      - "8090:8090"
