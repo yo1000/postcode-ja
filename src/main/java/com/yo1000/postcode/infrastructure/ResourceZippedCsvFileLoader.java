@@ -26,6 +26,8 @@ public class ResourceZippedCsvFileLoader implements ZippedCsvFileLoader<PostCsv,
     @Override
     public CloseableIterator<Post> load(RowHandler<PostCsv, Post> handler) throws IOException {
         ZipInputStream zipIn = new ZipInputStream(appProps.getResource().getInputStream());
+        zipIn.getNextEntry();
+
         InputStreamReader inReader = new InputStreamReader(zipIn, StandardCharsets.UTF_8);
         BufferedReader bufReader = new BufferedReader(inReader);
 
