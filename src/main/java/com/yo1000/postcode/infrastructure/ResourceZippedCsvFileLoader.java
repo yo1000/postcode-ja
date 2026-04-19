@@ -24,39 +24,45 @@ public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T,
 
     @Override
     public CloseableIterator<R> load(RowHandler<T, R> handler) throws IOException {
-        ZipInputStream zipIn = new ZipInputStream(appProps.getResource().getInputStream());
+        CloseableStack closeableStack = new CloseableStack();
+
+        InputStream resourceIn = closeableStack.pushCloseable(appProps.getResource().getInputStream());
+        ZipInputStream zipIn = closeableStack.pushCloseable(new ZipInputStream(resourceIn));
         zipIn.getNextEntry();
 
-        InputStreamReader inReader = new InputStreamReader(zipIn, StandardCharsets.UTF_8);
-        BufferedReader bufReader = new BufferedReader(inReader);
+        InputStreamReader inReader = closeableStack.pushCloseable(new InputStreamReader(zipIn, StandardCharsets.UTF_8));
+        BufferedReader bufReader = closeableStack.pushCloseable(new BufferedReader(inReader));
 
         CsvMapper csvMapper = new CsvMapper();
-        MappingIterator<T> iter = csvMapper
+        MappingIterator<T> iter = closeableStack.pushCloseable(csvMapper
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readerFor(PostCsv.class)
                 .with(PostCsv.SCHEMA)
-                .readValues(bufReader);
+                .readValues(bufReader));
 
         return new RowHandlingIterator<>(
-                handler, iter, zipIn, inReader, bufReader);
+                handler, iter, closeableStack);
+    }
+
+    static class CloseableStack extends Stack<Closeable> {
+        public <T extends Closeable> T pushCloseable(T closeable) {
+            push(closeable);
+            return closeable;
+        }
     }
 
     static class RowHandlingIterator<T, R> implements CloseableIterator<R> {
         private final RowHandler<T, R> rowHandler;
         private final MappingIterator<T> sourceIterator;
-        private final Stack<Closeable> closeableStack;
+        private final CloseableStack closeableStack;
 
         public RowHandlingIterator(
                 RowHandler<T, R> rowHandler,
                 MappingIterator<T> sourceIterator,
-                Closeable... closeables) {
+                CloseableStack closeableStack) {
             this.rowHandler = rowHandler;
             this.sourceIterator = sourceIterator;
-            this.closeableStack = new Stack<>();
-
-            for (Closeable closeable : closeables) {
-                closeableStack.push(closeable);
-            }
+            this.closeableStack = closeableStack;
         }
 
         @Override
@@ -80,7 +86,6 @@ public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T,
         @Override
         public void close() {
             try {
-                sourceIterator.close();
                 while (!closeableStack.isEmpty()) {
                     closeableStack.pop().close();
                 }
