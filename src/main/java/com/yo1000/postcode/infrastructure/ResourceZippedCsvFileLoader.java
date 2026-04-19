@@ -6,7 +6,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.yo1000.postcode.application.port.PostCsv;
 import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
 import com.yo1000.postcode.config.AppProperties;
-import com.yo1000.postcode.domain.Post;
 import org.springframework.data.util.CloseableIterator;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,7 @@ import java.util.Stack;
 import java.util.zip.ZipInputStream;
 
 @Repository
-public class ResourceZippedCsvFileLoader implements ZippedCsvFileLoader<PostCsv, Post> {
+public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T, R> {
     private final AppProperties appProps;
 
     public ResourceZippedCsvFileLoader(AppProperties appProps) {
@@ -24,7 +23,7 @@ public class ResourceZippedCsvFileLoader implements ZippedCsvFileLoader<PostCsv,
     }
 
     @Override
-    public CloseableIterator<Post> load(RowHandler<PostCsv, Post> handler) throws IOException {
+    public CloseableIterator<R> load(RowHandler<T, R> handler) throws IOException {
         ZipInputStream zipIn = new ZipInputStream(appProps.getResource().getInputStream());
         zipIn.getNextEntry();
 
@@ -32,7 +31,7 @@ public class ResourceZippedCsvFileLoader implements ZippedCsvFileLoader<PostCsv,
         BufferedReader bufReader = new BufferedReader(inReader);
 
         CsvMapper csvMapper = new CsvMapper();
-        MappingIterator<PostCsv> iter = csvMapper
+        MappingIterator<T> iter = csvMapper
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readerFor(PostCsv.class)
                 .with(PostCsv.SCHEMA)
