@@ -8,9 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.core.io.Resource;
 import org.springframework.data.util.CloseableIterator;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Spliterator;
@@ -156,5 +154,66 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(0).changed()).isEqualTo("");
             Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("");
         }
+    }
+
+    @Test
+    void test_load_closingException() throws IOException {
+        // Given
+        byte[] csv = """
+                01101,"060  ","0600000","ホッカイドウ","サッポロシチュウオウク","イカニケイサイガナイバアイ","北海道","札幌市中央区","以下に掲載がない場合",0,0,0,0,0,0
+                """.getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+
+        ZipOutputStream zipOut = new ZipOutputStream(bytesOut, StandardCharsets.UTF_8);
+        ZipEntry entry = new ZipEntry("utf_ken_all.csv");
+        zipOut.putNextEntry(entry);
+        zipOut.write(csv);
+        zipOut.finish();
+        zipOut.closeEntry();
+
+        ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytesOut.toByteArray());
+
+        InputStream spiedIn = Mockito.spy(bytesIn);
+        Mockito.doThrow(new IOException()).when(spiedIn).close();
+
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.doReturn(spiedIn).when(resource).getInputStream();
+
+        AppProperties appProps = Mockito.mock(AppProperties.class);
+        Mockito.doReturn(resource).when(appProps).getResource();
+
+        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(appProps);
+
+        // When
+        try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {
+            List<PostCsv> posts = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                    iter, Spliterator.ORDERED), false).toList();
+
+            Assertions.assertThat(posts.size()).isEqualTo(1);
+
+            Assertions.assertThat(posts.get(0).localGovCode()).isEqualTo("01101");
+            Assertions.assertThat(posts.get(0).postcode5()).isEqualTo("060  ");
+            Assertions.assertThat(posts.get(0).postcode7()).isEqualTo("0600000");
+            Assertions.assertThat(posts.get(0).prefectureName()).isEqualTo("北海道");
+            Assertions.assertThat(posts.get(0).municipalityName()).isEqualTo("札幌市中央区");
+            Assertions.assertThat(posts.get(0).townAreaName()).isEqualTo("以下に掲載がない場合");
+            Assertions.assertThat(posts.get(0).prefectureNameKatakana()).isEqualTo("ホッカイドウ");
+            Assertions.assertThat(posts.get(0).municipalityNameKatakana()).isEqualTo("サッポロシチュウオウク");
+            Assertions.assertThat(posts.get(0).townAreaNameKatakana()).isEqualTo("イカニケイサイガナイバアイ");
+            Assertions.assertThat(posts.get(0).townAreaWithMultiplePostcodes()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).townAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).townAreaWithChome()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).postcodeWithMultipleTownAreas()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).changed()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("0");
+        } catch (Exception e) {
+            // Then
+            Assertions.assertThat(e).isInstanceOf(UncheckedIOException.class);
+            Assertions.assertThat(e).hasCauseInstanceOf(IOException.class);
+            return;
+        }
+
+        Assertions.fail("Should be thrown exception on resource closing.");
     }
 }
