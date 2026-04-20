@@ -105,4 +105,56 @@ public class ResourceZippedCsvFileLoaderTests {
         Assertions.assertThat(posts.get(2).changed()).isEqualTo("0");
         Assertions.assertThat(posts.get(2).changeReason()).isEqualTo("0");
     }
+
+    @Test
+    void test_load_blank() throws IOException {
+        // Given
+        byte[] csv = """
+                ,,"","","","","","","",,,,,,
+                """.getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+
+        ZipOutputStream zipOut = new ZipOutputStream(bytesOut, StandardCharsets.UTF_8);
+        ZipEntry entry = new ZipEntry("utf_ken_all.csv");
+        zipOut.putNextEntry(entry);
+        zipOut.write(csv);
+        zipOut.finish();
+        zipOut.closeEntry();
+
+        ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytesOut.toByteArray());
+
+        Resource resource = Mockito.mock(Resource.class);
+        Mockito.doReturn(bytesIn).when(resource).getInputStream();
+
+        AppProperties appProps = Mockito.mock(AppProperties.class);
+        Mockito.doReturn(resource).when(appProps).getResource();
+
+        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(appProps);
+
+        // When
+        CloseableIterator<PostCsv> iter = loader.load(row -> row);
+
+        // Then
+        List<PostCsv> posts = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                iter, Spliterator.ORDERED), false).toList();
+
+        Assertions.assertThat(posts.size()).isEqualTo(1);
+
+        Assertions.assertThat(posts.get(0).localGovCode()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).postcode5()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).postcode7()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).prefectureName()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).municipalityName()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).townAreaName()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).prefectureNameKatakana()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).municipalityNameKatakana()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).townAreaNameKatakana()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).townAreaWithMultiplePostcodes()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).townAreaWithAddressNumbersPerKoaza()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).townAreaWithChome()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).postcodeWithMultipleTownAreas()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).changed()).isEqualTo("");
+        Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("");
+    }
 }
