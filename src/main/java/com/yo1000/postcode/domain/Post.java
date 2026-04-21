@@ -3,6 +3,12 @@ package com.yo1000.postcode.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yo1000.postcode.domain.vo.ChangeReasons;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.StringJoiner;
+
 /**
  *
  * @param localGovCode 全国地方公共団体コード（JIS X0401、X0402）
@@ -22,6 +28,7 @@ import com.yo1000.postcode.domain.vo.ChangeReasons;
  * @param changeReason 変更理由
  */
 public record Post(
+        String id,
         String localGovCode,
         String postcode5,
         String postcode7,
@@ -38,9 +45,63 @@ public record Post(
         boolean isChanged,
         ChangeReasons changeReason
 ) {
+    public Post(
+            String localGovCode,
+            String postcode5,
+            String postcode7,
+            String prefectureName,
+            String prefectureNameKatakana,
+            String municipalityName,
+            String municipalityNameKatakana,
+            String townAreaName,
+            String townAreaNameKatakana,
+            boolean isTownAreaWithMultiplePostcodes,
+            boolean isTownAreaWithAddressNumbersPerKoaza,
+            boolean isTownAreaWithChome,
+            boolean isPostcodeWithMultipleTownAreas,
+            boolean isChanged,
+            ChangeReasons changeReason) {
+        this(genId(localGovCode, postcode5, postcode7, prefectureName, municipalityName, townAreaName),
+                localGovCode,
+                postcode5,
+                postcode7,
+                prefectureName,
+                prefectureNameKatakana,
+                municipalityName,
+                municipalityNameKatakana,
+                townAreaName,
+                townAreaNameKatakana,
+                isTownAreaWithMultiplePostcodes,
+                isTownAreaWithAddressNumbersPerKoaza,
+                isTownAreaWithChome,
+                isPostcodeWithMultipleTownAreas,
+                isChanged,
+                changeReason);
+    }
+
     /** 郵便番号（7桁）のエイリアス */
     @JsonIgnore
     public String postcode() {
         return postcode7();
+    }
+
+    public static String genId(String localGovCode, String postcode5, String postcode7, String prefectureName, String municipalityName, String townAreaName) {
+        // Invisible separator
+        StringJoiner joiner = new StringJoiner("\u001F");
+        joiner.add(localGovCode)
+                .add(postcode5)
+                .add(postcode7)
+                .add(prefectureName)
+                .add(municipalityName)
+                .add(townAreaName);
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(joiner.toString().getBytes(StandardCharsets.UTF_8));
+
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
