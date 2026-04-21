@@ -18,11 +18,11 @@ public record PostCsv(
         String municipalityNameKatakana,
         String townAreaName,
         String townAreaNameKatakana,
-        String townAreaWithMultiplePostcodes,
-        String townAreaWithAddressNumbersPerKoaza,
-        String townAreaWithChome,
-        String postcodeWithMultipleTownAreas,
-        String changed,
+        String isTownAreaWithMultiplePostcodes,
+        String isTownAreaWithAddressNumbersPerKoaza,
+        String isTownAreaWithChome,
+        String isPostcodeWithMultipleTownAreas,
+        String isChanged,
         String changeReason
 ) {
     public static final CsvSchema SCHEMA = CsvSchema.builder()
@@ -35,11 +35,11 @@ public record PostCsv(
             .addColumn("prefectureName", CsvSchema.ColumnType.STRING)
             .addColumn("municipalityName", CsvSchema.ColumnType.STRING)
             .addColumn("townAreaName", CsvSchema.ColumnType.STRING)
-            .addColumn("townAreaWithMultiplePostcodes", CsvSchema.ColumnType.STRING)
-            .addColumn("townAreaWithAddressNumbersPerKoaza", CsvSchema.ColumnType.STRING)
-            .addColumn("townAreaWithChome", CsvSchema.ColumnType.STRING)
-            .addColumn("postcodeWithMultipleTownAreas", CsvSchema.ColumnType.STRING)
-            .addColumn("changed", CsvSchema.ColumnType.STRING)
+            .addColumn("isTownAreaWithMultiplePostcodes", CsvSchema.ColumnType.STRING)
+            .addColumn("isTownAreaWithAddressNumbersPerKoaza", CsvSchema.ColumnType.STRING)
+            .addColumn("isTownAreaWithChome", CsvSchema.ColumnType.STRING)
+            .addColumn("isPostcodeWithMultipleTownAreas", CsvSchema.ColumnType.STRING)
+            .addColumn("isChanged", CsvSchema.ColumnType.STRING)
             .addColumn("changeReason", CsvSchema.ColumnType.STRING)
             .build();
 
@@ -54,11 +54,11 @@ public record PostCsv(
                 municipalityNameKatakana(),
                 townAreaName(),
                 townAreaNameKatakana(),
-                Objects.equals(townAreaWithMultiplePostcodes(), "1"),
-                Objects.equals(townAreaWithAddressNumbersPerKoaza(), "1"),
-                Objects.equals(townAreaWithChome(), "1"),
-                Objects.equals(postcodeWithMultipleTownAreas(), "1"),
-                Objects.equals(changed(), "1"),
+                Objects.equals(isTownAreaWithMultiplePostcodes(), "1"),
+                Objects.equals(isTownAreaWithAddressNumbersPerKoaza(), "1"),
+                Objects.equals(isTownAreaWithChome(), "1"),
+                Objects.equals(isPostcodeWithMultipleTownAreas(), "1"),
+                Objects.equals(isChanged(), "1"),
                 ChangeReasons.of(changeReason())
         );
     }

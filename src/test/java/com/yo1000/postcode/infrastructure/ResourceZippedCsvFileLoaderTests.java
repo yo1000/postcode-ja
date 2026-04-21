@@ -63,11 +63,11 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(0).prefectureNameKatakana()).isEqualTo("ホッカイドウ");
             Assertions.assertThat(posts.get(0).municipalityNameKatakana()).isEqualTo("サッポロシチュウオウク");
             Assertions.assertThat(posts.get(0).townAreaNameKatakana()).isEqualTo("イカニケイサイガナイバアイ");
-            Assertions.assertThat(posts.get(0).townAreaWithMultiplePostcodes()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).townAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).townAreaWithChome()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).postcodeWithMultipleTownAreas()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).changed()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithMultiplePostcodes()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithChome()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isPostcodeWithMultipleTownAreas()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isChanged()).isEqualTo("0");
             Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("0");
 
             Assertions.assertThat(posts.get(1).localGovCode()).isEqualTo("13101");
@@ -79,11 +79,11 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(1).prefectureNameKatakana()).isEqualTo("トウキョウト");
             Assertions.assertThat(posts.get(1).municipalityNameKatakana()).isEqualTo("チヨダク");
             Assertions.assertThat(posts.get(1).townAreaNameKatakana()).isEqualTo("イカニケイサイガナイバアイ");
-            Assertions.assertThat(posts.get(1).townAreaWithMultiplePostcodes()).isEqualTo("0");
-            Assertions.assertThat(posts.get(1).townAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
-            Assertions.assertThat(posts.get(1).townAreaWithChome()).isEqualTo("0");
-            Assertions.assertThat(posts.get(1).postcodeWithMultipleTownAreas()).isEqualTo("0");
-            Assertions.assertThat(posts.get(1).changed()).isEqualTo("0");
+            Assertions.assertThat(posts.get(1).isTownAreaWithMultiplePostcodes()).isEqualTo("0");
+            Assertions.assertThat(posts.get(1).isTownAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
+            Assertions.assertThat(posts.get(1).isTownAreaWithChome()).isEqualTo("0");
+            Assertions.assertThat(posts.get(1).isPostcodeWithMultipleTownAreas()).isEqualTo("0");
+            Assertions.assertThat(posts.get(1).isChanged()).isEqualTo("0");
             Assertions.assertThat(posts.get(1).changeReason()).isEqualTo("0");
 
             Assertions.assertThat(posts.get(2).localGovCode()).isEqualTo("14101");
@@ -95,11 +95,11 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(2).prefectureNameKatakana()).isEqualTo("カナガワケン");
             Assertions.assertThat(posts.get(2).municipalityNameKatakana()).isEqualTo("ヨコハマシツルミク");
             Assertions.assertThat(posts.get(2).townAreaNameKatakana()).isEqualTo("イカニケイサイガナイバアイ");
-            Assertions.assertThat(posts.get(2).townAreaWithMultiplePostcodes()).isEqualTo("0");
-            Assertions.assertThat(posts.get(2).townAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
-            Assertions.assertThat(posts.get(2).townAreaWithChome()).isEqualTo("0");
-            Assertions.assertThat(posts.get(2).postcodeWithMultipleTownAreas()).isEqualTo("0");
-            Assertions.assertThat(posts.get(2).changed()).isEqualTo("0");
+            Assertions.assertThat(posts.get(2).isTownAreaWithMultiplePostcodes()).isEqualTo("0");
+            Assertions.assertThat(posts.get(2).isTownAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
+            Assertions.assertThat(posts.get(2).isTownAreaWithChome()).isEqualTo("0");
+            Assertions.assertThat(posts.get(2).isPostcodeWithMultipleTownAreas()).isEqualTo("0");
+            Assertions.assertThat(posts.get(2).isChanged()).isEqualTo("0");
             Assertions.assertThat(posts.get(2).changeReason()).isEqualTo("0");
         }
     }
@@ -147,11 +147,11 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(0).prefectureNameKatakana()).isEqualTo("");
             Assertions.assertThat(posts.get(0).municipalityNameKatakana()).isEqualTo("");
             Assertions.assertThat(posts.get(0).townAreaNameKatakana()).isEqualTo("");
-            Assertions.assertThat(posts.get(0).townAreaWithMultiplePostcodes()).isEqualTo("");
-            Assertions.assertThat(posts.get(0).townAreaWithAddressNumbersPerKoaza()).isEqualTo("");
-            Assertions.assertThat(posts.get(0).townAreaWithChome()).isEqualTo("");
-            Assertions.assertThat(posts.get(0).postcodeWithMultipleTownAreas()).isEqualTo("");
-            Assertions.assertThat(posts.get(0).changed()).isEqualTo("");
+            Assertions.assertThat(posts.get(0).isTownAreaWithMultiplePostcodes()).isEqualTo("");
+            Assertions.assertThat(posts.get(0).isTownAreaWithAddressNumbersPerKoaza()).isEqualTo("");
+            Assertions.assertThat(posts.get(0).isTownAreaWithChome()).isEqualTo("");
+            Assertions.assertThat(posts.get(0).isPostcodeWithMultipleTownAreas()).isEqualTo("");
+            Assertions.assertThat(posts.get(0).isChanged()).isEqualTo("");
             Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("");
         }
     }
@@ -201,11 +201,11 @@ public class ResourceZippedCsvFileLoaderTests {
             Assertions.assertThat(posts.get(0).prefectureNameKatakana()).isEqualTo("ホッカイドウ");
             Assertions.assertThat(posts.get(0).municipalityNameKatakana()).isEqualTo("サッポロシチュウオウク");
             Assertions.assertThat(posts.get(0).townAreaNameKatakana()).isEqualTo("イカニケイサイガナイバアイ");
-            Assertions.assertThat(posts.get(0).townAreaWithMultiplePostcodes()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).townAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).townAreaWithChome()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).postcodeWithMultipleTownAreas()).isEqualTo("0");
-            Assertions.assertThat(posts.get(0).changed()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithMultiplePostcodes()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithAddressNumbersPerKoaza()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isTownAreaWithChome()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isPostcodeWithMultipleTownAreas()).isEqualTo("0");
+            Assertions.assertThat(posts.get(0).isChanged()).isEqualTo("0");
             Assertions.assertThat(posts.get(0).changeReason()).isEqualTo("0");
         } catch (Exception e) {
             // Then

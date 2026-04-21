@@ -14,11 +14,11 @@ import com.yo1000.postcode.domain.vo.ChangeReasons;
  * @param municipalityNameKatakana 市区町村名カタカナ
  * @param townAreaName 町域名
  * @param townAreaNameKatakana 町域名カタカナ
- * @param townAreaWithMultiplePostcodes 一町域が二以上の郵便番号で表される
- * @param townAreaWithAddressNumbersPerKoaza 小字毎に番地が起番されている町域
- * @param townAreaWithChome 丁目を有する町域
- * @param postcodeWithMultipleTownAreas 一つの郵便番号で二以上の町域を表す
- * @param changed 更新の有無
+ * @param isTownAreaWithMultiplePostcodes 一町域が二以上の郵便番号で表される
+ * @param isTownAreaWithAddressNumbersPerKoaza 小字毎に番地が起番されている町域
+ * @param isTownAreaWithChome 丁目を有する町域
+ * @param isPostcodeWithMultipleTownAreas 一つの郵便番号で二以上の町域を表す
+ * @param isChanged 更新の有無
  * @param changeReason 変更理由
  */
 public record Post(
@@ -31,11 +31,11 @@ public record Post(
         String municipalityNameKatakana,
         String townAreaName,
         String townAreaNameKatakana,
-        boolean townAreaWithMultiplePostcodes,
-        boolean townAreaWithAddressNumbersPerKoaza,
-        boolean townAreaWithChome,
-        boolean postcodeWithMultipleTownAreas,
-        boolean changed,
+        boolean isTownAreaWithMultiplePostcodes,
+        boolean isTownAreaWithAddressNumbersPerKoaza,
+        boolean isTownAreaWithChome,
+        boolean isPostcodeWithMultipleTownAreas,
+        boolean isChanged,
         ChangeReasons changeReason
 ) {
     /** 郵便番号（7桁）のエイリアス */
