@@ -1,6 +1,7 @@
 Postcode
 ====================================================================================================
 
+Load Japanese postcodes from a file and transform it into an API.
 
 
 How to run
