@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.yo1000</groupId>
-	<artifactId>postcode</artifactId>
+	<artifactId>postcode-ja</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
