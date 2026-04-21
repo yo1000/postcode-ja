@@ -26,6 +26,7 @@ import java.util.StringJoiner;
  * @param isPostcodeWithMultipleTownAreas 一つの郵便番号で二以上の町域を表す
  * @param isChanged 更新の有無
  * @param changeReason 変更理由
+ * @param creationEpochMillis
  */
 public record Post(
         String id,
@@ -38,12 +39,13 @@ public record Post(
         String municipalityNameKatakana,
         String townAreaName,
         String townAreaNameKatakana,
-        boolean isTownAreaWithMultiplePostcodes,
-        boolean isTownAreaWithAddressNumbersPerKoaza,
-        boolean isTownAreaWithChome,
-        boolean isPostcodeWithMultipleTownAreas,
-        boolean isChanged,
-        ChangeReasons changeReason
+        Boolean isTownAreaWithMultiplePostcodes,
+        Boolean isTownAreaWithAddressNumbersPerKoaza,
+        Boolean isTownAreaWithChome,
+        Boolean isPostcodeWithMultipleTownAreas,
+        Boolean isChanged,
+        ChangeReasons changeReason,
+        long creationEpochMillis
 ) {
     public Post(
             String localGovCode,
@@ -55,12 +57,13 @@ public record Post(
             String municipalityNameKatakana,
             String townAreaName,
             String townAreaNameKatakana,
-            boolean isTownAreaWithMultiplePostcodes,
-            boolean isTownAreaWithAddressNumbersPerKoaza,
-            boolean isTownAreaWithChome,
-            boolean isPostcodeWithMultipleTownAreas,
-            boolean isChanged,
-            ChangeReasons changeReason) {
+            Boolean isTownAreaWithMultiplePostcodes,
+            Boolean isTownAreaWithAddressNumbersPerKoaza,
+            Boolean isTownAreaWithChome,
+            Boolean isPostcodeWithMultipleTownAreas,
+            Boolean isChanged,
+            ChangeReasons changeReason,
+            long creationEpochMillis) {
         this(genId(localGovCode, postcode5, postcode7, prefectureName, municipalityName, townAreaName),
                 localGovCode,
                 postcode5,
@@ -76,7 +79,8 @@ public record Post(
                 isTownAreaWithChome,
                 isPostcodeWithMultipleTownAreas,
                 isChanged,
-                changeReason);
+                changeReason,
+                creationEpochMillis);
     }
 
     /** 郵便番号（7桁）のエイリアス */
@@ -85,7 +89,13 @@ public record Post(
         return postcode7();
     }
 
-    public static String genId(String localGovCode, String postcode5, String postcode7, String prefectureName, String municipalityName, String townAreaName) {
+    public static String genId(
+            String localGovCode,
+            String postcode5,
+            String postcode7,
+            String prefectureName,
+            String municipalityName,
+            String townAreaName) {
         // Invisible separator
         StringJoiner joiner = new StringJoiner("\u001F");
         joiner.add(localGovCode)

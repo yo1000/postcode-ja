@@ -14,7 +14,7 @@ public class PostTests {
                 "札幌市中央区", "サッポロシチュウオウク",
                 "以下に掲載がない場合", "イカニケイサイガナイバアイ",
                 false,false,false,false,
-                false, ChangeReasons.NO_CHANGE);
+                false, ChangeReasons.NO_CHANGE, 1000L);
 
         // When
         String postcode = post.postcode();

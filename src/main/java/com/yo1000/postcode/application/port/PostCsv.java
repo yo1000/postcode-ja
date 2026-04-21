@@ -43,7 +43,7 @@ public record PostCsv(
             .addColumn("changeReason", CsvSchema.ColumnType.STRING)
             .build();
 
-    public Post toPost() {
+    public Post toPost(long creationEpochMillis) {
         return new Post(
                 localGovCode(),
                 postcode5(),
@@ -59,7 +59,8 @@ public record PostCsv(
                 Objects.equals(isTownAreaWithChome(), "1"),
                 Objects.equals(isPostcodeWithMultipleTownAreas(), "1"),
                 Objects.equals(isChanged(), "1"),
-                ChangeReasons.of(changeReason())
+                ChangeReasons.of(changeReason()),
+                creationEpochMillis
         );
     }
 }

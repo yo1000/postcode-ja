@@ -18,7 +18,7 @@ public class PostCsvTests {
                 "0","0");
 
         // When
-        Post post = postCsv.toPost();
+        Post post = postCsv.toPost(1000L);
 
         // Then
         Assertions.assertThat(post).isEqualTo(new Post(
@@ -28,6 +28,6 @@ public class PostCsvTests {
                 "札幌市中央区", "サッポロシチュウオウク",
                 "以下に掲載がない場合", "イカニケイサイガナイバアイ",
                 false,false,false,false,
-                false, ChangeReasons.NO_CHANGE));
+                false, ChangeReasons.NO_CHANGE, 1000L));
     }
 }
