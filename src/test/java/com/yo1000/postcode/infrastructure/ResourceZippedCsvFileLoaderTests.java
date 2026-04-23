@@ -1,7 +1,10 @@
 package com.yo1000.postcode.infrastructure;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.yo1000.postcode.application.port.PostCsv;
-import com.yo1000.postcode.config.AppProperties;
+import com.yo1000.postcode.config.CsvProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,10 +44,13 @@ public class ResourceZippedCsvFileLoaderTests {
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(bytesIn).when(resource).getInputStream();
 
-        AppProperties appProps = Mockito.mock(AppProperties.class);
-        Mockito.doReturn(resource).when(appProps).getResource();
+        CsvProperties csvProps = Mockito.mock(CsvProperties.class);
+        Mockito.doReturn(resource).when(csvProps).getResource();
 
-        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(appProps);
+        ObjectMapper csvMapper = new CsvMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {
@@ -125,10 +131,13 @@ public class ResourceZippedCsvFileLoaderTests {
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(bytesIn).when(resource).getInputStream();
 
-        AppProperties appProps = Mockito.mock(AppProperties.class);
-        Mockito.doReturn(resource).when(appProps).getResource();
+        CsvProperties csvProps = Mockito.mock(CsvProperties.class);
+        Mockito.doReturn(resource).when(csvProps).getResource();
 
-        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(appProps);
+        ObjectMapper csvMapper = new CsvMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {
@@ -180,10 +189,13 @@ public class ResourceZippedCsvFileLoaderTests {
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(spiedIn).when(resource).getInputStream();
 
-        AppProperties appProps = Mockito.mock(AppProperties.class);
-        Mockito.doReturn(resource).when(appProps).getResource();
+        CsvProperties csvProps = Mockito.mock(CsvProperties.class);
+        Mockito.doReturn(resource).when(csvProps).getResource();
 
-        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(appProps);
+        ObjectMapper csvMapper = new CsvMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        ResourceZippedCsvFileLoader<PostCsv, PostCsv> loader = new ResourceZippedCsvFileLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {

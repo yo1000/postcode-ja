@@ -1,11 +1,10 @@
 package com.yo1000.postcode.infrastructure;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yo1000.postcode.application.port.PostCsv;
 import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
-import com.yo1000.postcode.config.AppProperties;
+import com.yo1000.postcode.config.CsvProperties;
 import org.springframework.data.util.CloseableIterator;
 import org.springframework.stereotype.Repository;
 
@@ -16,26 +15,26 @@ import java.util.zip.ZipInputStream;
 
 @Repository
 public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T, R> {
-    private final AppProperties appProps;
+    private final CsvProperties csvProps;
+    private final ObjectMapper csvMapper;
 
-    public ResourceZippedCsvFileLoader(AppProperties appProps) {
-        this.appProps = appProps;
+    public ResourceZippedCsvFileLoader(CsvProperties csvProps, ObjectMapper csvMapper) {
+        this.csvProps = csvProps;
+        this.csvMapper = csvMapper;
     }
 
     @Override
     public CloseableIterator<R> load(RowHandler<T, R> handler) throws IOException {
         CloseableStack closeableStack = new CloseableStack();
 
-        InputStream resourceIn = closeableStack.pushCloseable(appProps.getResource().getInputStream());
+        InputStream resourceIn = closeableStack.pushCloseable(csvProps.getResource().getInputStream());
         ZipInputStream zipIn = closeableStack.pushCloseable(new ZipInputStream(resourceIn));
         zipIn.getNextEntry();
 
         InputStreamReader inReader = closeableStack.pushCloseable(new InputStreamReader(zipIn, StandardCharsets.UTF_8));
         BufferedReader bufReader = closeableStack.pushCloseable(new BufferedReader(inReader));
 
-        CsvMapper csvMapper = new CsvMapper();
         MappingIterator<T> iter = closeableStack.pushCloseable(csvMapper
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readerFor(PostCsv.class)
                 .with(PostCsv.SCHEMA)
                 .readValues(bufReader));

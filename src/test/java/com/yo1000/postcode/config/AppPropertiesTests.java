@@ -11,14 +11,14 @@ import org.springframework.test.context.DynamicPropertySource;
 public class AppPropertiesTests {
     @DynamicPropertySource
     static void configureProps(DynamicPropertyRegistry registry) {
-        registry.add("app.resource", () -> "classpath:/utf_ken_all.zip");
+        registry.add("app.csv.resource", () -> "classpath:/utf_ken_all.zip");
     }
 
     @Autowired
-    AppProperties appProps;
+    CsvProperties csvProps;
 
     @Test
     void test() {
-        Assertions.assertThat(appProps.getResource().exists()).isTrue();
+        Assertions.assertThat(csvProps.getResource().exists()).isTrue();
     }
 }

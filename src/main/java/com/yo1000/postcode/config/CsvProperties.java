@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 @Configuration
-@ConfigurationProperties(prefix = "app")
-public class AppProperties {
+@ConfigurationProperties(prefix = "app.csv")
+public class CsvProperties {
     private Resource resource;
 
     public Resource getResource() {

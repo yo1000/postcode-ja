@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Repository
 public class JdbcPostRepository implements PostRepository {
@@ -148,12 +149,12 @@ public class JdbcPostRepository implements PostRepository {
     public List<Long> findAllCreationEpochMillis() {
         return namedJdbcOps.query(
                 """
-                SELECT
-                    creation_epoch_millis
-                FROM
-                    posts
-                GROUP BY
-                    creation_epoch_millis
+                    SELECT
+                        creation_epoch_millis
+                    FROM
+                        posts
+                    GROUP BY
+                        creation_epoch_millis
                 """,
                 new SingleColumnRowMapper<>()
         );
@@ -196,6 +197,21 @@ public class JdbcPostRepository implements PostRepository {
 
         // To prioritise performance, returns an empty list.
         return Collections.emptyList();
+    }
+
+    @Override
+    public void deleteAllByCreationEpochMillis(Iterable<Long> creationEpochMillis) {
+        namedJdbcOps.batchUpdate(
+                """
+                    DELETE FROM
+                        posts
+                    WHERE
+                        creation_epoch_millis = :creationEpochMillis
+                """,
+                StreamSupport.stream(creationEpochMillis.spliterator(), false)
+                        .map(millis -> new MapSqlParameterSource()
+                                .addValue("creationEpochMillis", millis))
+                        .toArray(SqlParameterSource[]::new));
     }
 
     private List<Post> query(String criteriaQuery, SqlParameterSource criteriaParams) {

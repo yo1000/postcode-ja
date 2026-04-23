@@ -10,4 +10,5 @@ public interface PostRepository {
     List<Post> findByCriteria(Post criteria);
     List<Long> findAllCreationEpochMillis();
     List<Post> saveAll(Iterable<Post> entities);
+    void deleteAllByCreationEpochMillis(Iterable<Long> creationEpochMillis);
 }
