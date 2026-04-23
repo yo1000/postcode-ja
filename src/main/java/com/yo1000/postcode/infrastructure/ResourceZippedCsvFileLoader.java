@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Stack;
 import java.util.zip.ZipInputStream;
 
@@ -26,6 +27,10 @@ public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T,
     @Override
     public CloseableIterator<R> load(RowHandler<T, R> handler) throws IOException {
         CloseableStack closeableStack = new CloseableStack();
+
+        if (csvProps.getResource() == null || !csvProps.getResource().exists()) {
+            return new RowHandlingIterator<>(handler, MappingIterator.emptyIterator(), closeableStack);
+        }
 
         InputStream resourceIn = closeableStack.pushCloseable(csvProps.getResource().getInputStream());
         ZipInputStream zipIn = closeableStack.pushCloseable(new ZipInputStream(resourceIn));

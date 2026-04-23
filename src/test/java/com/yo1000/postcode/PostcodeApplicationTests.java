@@ -20,7 +20,8 @@ class PostcodeApplicationTests {
 		registry.add("spring.datasource.username", () -> postgres.getUsername());
 		registry.add("spring.datasource.password", () -> postgres.getPassword());
 
-		registry.add("app.resource-uri", () -> "");
+		// Required to apply `schema.sql`.
+		registry.add("spring.sql.init.mode", () -> "always");
 	}
 
 	@Test

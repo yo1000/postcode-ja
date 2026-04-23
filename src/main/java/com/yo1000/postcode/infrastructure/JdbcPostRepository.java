@@ -182,7 +182,7 @@ public class JdbcPostRepository implements PostRepository {
                     .addValue("isTownAreaWithChome", entity.isTownAreaWithChome() ? "1" : "0")
                     .addValue("isPostcodeWithMultipleTownAreas", entity.isPostcodeWithMultipleTownAreas() ? "1" : "0")
                     .addValue("isChanged", entity.isChanged() ? "1" : "0")
-                    .addValue("changeReason", entity.changeReason().getCode())
+                    .addValue("changeReason", Optional.ofNullable(entity.changeReason()).map(ChangeReasons::getCode).orElse(null))
                     .addValue("creationEpochMillis", entity.creationEpochMillis()));
 
             if (batchParams.size() >= batchSize) {

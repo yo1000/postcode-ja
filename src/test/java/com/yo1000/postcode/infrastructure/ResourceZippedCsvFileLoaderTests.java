@@ -43,6 +43,7 @@ public class ResourceZippedCsvFileLoaderTests {
 
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(bytesIn).when(resource).getInputStream();
+        Mockito.doReturn(true).when(resource).exists();
 
         CsvProperties csvProps = Mockito.mock(CsvProperties.class);
         Mockito.doReturn(resource).when(csvProps).getResource();
@@ -130,6 +131,7 @@ public class ResourceZippedCsvFileLoaderTests {
 
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(bytesIn).when(resource).getInputStream();
+        Mockito.doReturn(true).when(resource).exists();
 
         CsvProperties csvProps = Mockito.mock(CsvProperties.class);
         Mockito.doReturn(resource).when(csvProps).getResource();
@@ -188,6 +190,7 @@ public class ResourceZippedCsvFileLoaderTests {
 
         Resource resource = Mockito.mock(Resource.class);
         Mockito.doReturn(spiedIn).when(resource).getInputStream();
+        Mockito.doReturn(true).when(resource).exists();
 
         CsvProperties csvProps = Mockito.mock(CsvProperties.class);
         Mockito.doReturn(resource).when(csvProps).getResource();
