@@ -351,8 +351,8 @@ public class JdbcPostRepositoryTests {
                         "東京都", "トウキョウト",
                         "千代田区", "チヨダク",
                         "以下に掲載がない場合", "イカニケイサイガナイバアイ",
-                        false, false, false, false,
-                        false, ChangeReasons.NO_CHANGE, 1000L),
+                        true, true, true, true,
+                        true, ChangeReasons.MUNICIPAL_REORGANIZATION, 1000L),
                 new Post(
                         "14101", "230  ", "2300000",
                         "神奈川県", "カナガワケン",
@@ -416,11 +416,11 @@ public class JdbcPostRepositoryTests {
         Assertions.assertThat(results.get(1).get("municipality_name_katakana")).isEqualTo("チヨダク");
         Assertions.assertThat(results.get(1).get("town_area_name")).isEqualTo("以下に掲載がない場合");
         Assertions.assertThat(results.get(1).get("town_area_name_katakana")).isEqualTo("イカニケイサイガナイバアイ");
-        Assertions.assertThat(results.get(1).get("is_town_area_with_multiple_postcodes")).isEqualTo("0");
-        Assertions.assertThat(results.get(1).get("is_town_area_with_address_numbers_per_koaza")).isEqualTo("0");
-        Assertions.assertThat(results.get(1).get("is_postcode_with_multiple_town_areas")).isEqualTo("0");
-        Assertions.assertThat(results.get(1).get("is_changed")).isEqualTo("0");
-        Assertions.assertThat(results.get(1).get("change_reason")).isEqualTo("0");
+        Assertions.assertThat(results.get(1).get("is_town_area_with_multiple_postcodes")).isEqualTo("1");
+        Assertions.assertThat(results.get(1).get("is_town_area_with_address_numbers_per_koaza")).isEqualTo("1");
+        Assertions.assertThat(results.get(1).get("is_postcode_with_multiple_town_areas")).isEqualTo("1");
+        Assertions.assertThat(results.get(1).get("is_changed")).isEqualTo("1");
+        Assertions.assertThat(results.get(1).get("change_reason")).isEqualTo("1");
         Assertions.assertThat(results.get(1).get("creation_epoch_millis")).isEqualTo(1000L);
 
         Assertions.assertThat(results.get(2).get("local_gov_code")).isEqualTo("14101");
@@ -498,5 +498,133 @@ public class JdbcPostRepositoryTests {
         Assertions.assertThat(results.get(2001).get("id")).isEqualTo("2001");
         Assertions.assertThat(results.get(2001).get("local_gov_code")).isEqualTo("01101");
         Assertions.assertThat(results.get(2001).get("creation_epoch_millis")).isEqualTo(1000L);
+    }
+
+    @Test
+    @Sql(statements = {
+            """
+            INSERT INTO posts (
+                id,
+                local_gov_code, postcode5, postcode7,
+                prefecture_name, prefecture_name_katakana,
+                municipality_name, municipality_name_katakana,
+                town_area_name, town_area_name_katakana,
+                is_town_area_with_multiple_postcodes,
+                is_town_area_with_address_numbers_per_koaza,
+                is_town_area_with_chome,
+                is_postcode_with_multiple_town_areas,
+                is_changed, change_reason,
+                creation_epoch_millis
+            ) VALUES (
+                '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcde1',
+                '01101', '060  ', '0600000',
+                '北海道', 'ホッカイドウ',
+                '札幌市中央区', 'サッポロシチュウオウク',
+                '以下に掲載がない場合', 'イカニケイサイガナイバアイ',
+                '0', '0', '0', '0',
+                '0', '0',
+                1000
+            );
+            """, """
+            INSERT INTO posts (
+                id,
+                local_gov_code, postcode5, postcode7,
+                prefecture_name, prefecture_name_katakana,
+                municipality_name, municipality_name_katakana,
+                town_area_name, town_area_name_katakana,
+                is_town_area_with_multiple_postcodes,
+                is_town_area_with_address_numbers_per_koaza,
+                is_town_area_with_chome,
+                is_postcode_with_multiple_town_areas,
+                is_changed, change_reason,
+                creation_epoch_millis
+            ) VALUES (
+                '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcde2',
+                '01101', '060  ', '0600000',
+                '北海道', 'ホッカイドウ',
+                '札幌市中央区', 'サッポロシチュウオウク',
+                '以下に掲載がない場合', 'イカニケイサイガナイバアイ',
+                '0', '0', '0', '0',
+                '0', '0',
+                2000
+            );
+            """, """
+            INSERT INTO posts (
+                id,
+                local_gov_code, postcode5, postcode7,
+                prefecture_name, prefecture_name_katakana,
+                municipality_name, municipality_name_katakana,
+                town_area_name, town_area_name_katakana,
+                is_town_area_with_multiple_postcodes,
+                is_town_area_with_address_numbers_per_koaza,
+                is_town_area_with_chome,
+                is_postcode_with_multiple_town_areas,
+                is_changed, change_reason,
+                creation_epoch_millis
+            ) VALUES (
+                '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcde3',
+                '01101', '060  ', '0600000',
+                '北海道', 'ホッカイドウ',
+                '札幌市中央区', 'サッポロシチュウオウク',
+                '以下に掲載がない場合', 'イカニケイサイガナイバアイ',
+                '0', '0', '0', '0',
+                '0', '0',
+                3000
+            );
+            """
+    })
+    void test_deleteAllByCreationEpochMillis() {
+        // Given
+        JdbcPostRepository repos = new JdbcPostRepository(namedJdbcOps);
+
+        // When
+        repos.deleteAllByCreationEpochMillis(List.of(1000L, 3000L));
+
+        // Then
+        List<Map<String, Object>> results= namedJdbcOps.query(
+                """
+                        SELECT
+                            id,
+                            local_gov_code,
+                            postcode5,
+                            postcode7,
+                            prefecture_name,
+                            prefecture_name_katakana,
+                            municipality_name,
+                            municipality_name_katakana,
+                            town_area_name,
+                            town_area_name_katakana,
+                            is_town_area_with_multiple_postcodes,
+                            is_town_area_with_address_numbers_per_koaza,
+                            is_town_area_with_chome,
+                            is_postcode_with_multiple_town_areas,
+                            is_changed,
+                            change_reason,
+                            creation_epoch_millis
+                        FROM
+                            posts
+                        ORDER BY
+                            postcode7
+                    """,
+                new ColumnMapRowMapper());
+
+        Assertions.assertThat(results.size()).isEqualTo(1);
+
+        Assertions.assertThat(results.get(0).get("id")).isEqualTo("1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcde2");
+        Assertions.assertThat(results.get(0).get("local_gov_code")).isEqualTo("01101");
+        Assertions.assertThat(results.get(0).get("postcode5")).isEqualTo("060  ");
+        Assertions.assertThat(results.get(0).get("postcode7")).isEqualTo("0600000");
+        Assertions.assertThat(results.get(0).get("prefecture_name")).isEqualTo("北海道");
+        Assertions.assertThat(results.get(0).get("prefecture_name_katakana")).isEqualTo("ホッカイドウ");
+        Assertions.assertThat(results.get(0).get("municipality_name")).isEqualTo("札幌市中央区");
+        Assertions.assertThat(results.get(0).get("municipality_name_katakana")).isEqualTo("サッポロシチュウオウク");
+        Assertions.assertThat(results.get(0).get("town_area_name")).isEqualTo("以下に掲載がない場合");
+        Assertions.assertThat(results.get(0).get("town_area_name_katakana")).isEqualTo("イカニケイサイガナイバアイ");
+        Assertions.assertThat(results.get(0).get("is_town_area_with_multiple_postcodes")).isEqualTo("0");
+        Assertions.assertThat(results.get(0).get("is_town_area_with_address_numbers_per_koaza")).isEqualTo("0");
+        Assertions.assertThat(results.get(0).get("is_postcode_with_multiple_town_areas")).isEqualTo("0");
+        Assertions.assertThat(results.get(0).get("is_changed")).isEqualTo("0");
+        Assertions.assertThat(results.get(0).get("change_reason")).isEqualTo("0");
+        Assertions.assertThat(results.get(0).get("creation_epoch_millis")).isEqualTo(2000L);
     }
 }
