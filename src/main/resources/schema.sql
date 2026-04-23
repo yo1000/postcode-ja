@@ -24,3 +24,12 @@ CREATE INDEX idx__posts__postcode7          ON posts (postcode7, creation_epoch_
 CREATE INDEX idx__posts__address            ON posts (prefecture_name, municipality_name, town_area_name, creation_epoch_millis);
 CREATE INDEX idx__posts__address_katakana   ON posts (prefecture_name_katakana, municipality_name_katakana, town_area_name_katakana, creation_epoch_millis);
 CREATE INDEX idx__posts__creation_epoch     ON posts (creation_epoch_millis);
+
+CREATE TABLE task_nodes(
+    id                      UUID,
+    rank                    integer,
+    update_epoch_millis     bigint,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx__task_nodes__update_epoch ON task_nodes (update_epoch_millis);
