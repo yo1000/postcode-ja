@@ -27,7 +27,14 @@ docker compose down && docker compose up --build
 - http://localhost:8080/posts/1000001
 - http://localhost:8080/posts/100--
 - http://localhost:8080/posts?prefectureName=%E6%9D%B1%E4%BA%AC%E9%83%BD&municipalityName=%E5%8D%83%E4%BB%A3%E7%94%B0%E5%8C%BA&townAreaName=%E5%8D%83%E4%BB%A3%E7%94%B0
-- 
+
+
+How to retrieve resource files from the internet
+----------------------------------------------------------------------------------------------------
+
+```bash
+export APP_CSV_RESOURCE="https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip"
+```
 
 
 Actuator endpoints
