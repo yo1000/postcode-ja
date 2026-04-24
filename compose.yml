@@ -1,30 +1,58 @@
+x-app-environment: &app-environment
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_PASSWORD: postgres
+  APP_CSV_RESOURCE: file:///tmp/utf_ken_all.zip
+  # Production only
+  #APP_CSV_RESOURCE: https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+  # Local only (Every 2-minutes)
+  APP_TIME_UPDATECRON: "0 */2 * * * *"
+  # Local only (60-seconds)
+  APP_TIME_WAITUNITTIMEMILLIS: 60000
+  # Local only (2-minutes)
+  APP_TIME_MINUPDATEINTERVALMILLIS: 120000
+  # Local only (5-minutes)
+  APP_TIME_NODEKEEPALIVEMILLIS: 300000
+  APP_NODE_GENERATIONS: 5
+  # Only local
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
+
 services:
-  postcode-app:
+  postcode-app-1:
     build:
       context: .
       args:
         JAR: ./target/*.jar
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      APP_CSV_RESOURCE: file:///tmp/utf_ken_all.zip
-      # Local only (Every 2-minutes)
-      APP_TIME_UPDATECRON: "0 */2 * * * *"
-      # Local only (60-seconds)
-      APP_TIME_WAITUNITTIMEMILLIS: 60000
-      # Local only (2-minutes)
-      APP_TIME_MINUPDATEINTERVALMILLIS: 120000
-      # Local only (5-minutes)
-      APP_TIME_NODEKEEPALIVEMILLIS: 300000
-      APP_NODE_GENERATIONS: 5
-      # Only local
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
+      <<: *app-environment
     volumes:
       - ./utf_ken_all.zip:/tmp/utf_ken_all.zip:ro
     ports:
       - "8080:8080"
       - "8090:8090"
+
+  postcode-app-2:
+    build:
+      context: .
+      args:
+        JAR: ./target/*.jar
+    environment:
+      <<: *app-environment
+    volumes:
+      - ./utf_ken_all.zip:/tmp/utf_ken_all.zip:ro
+    ports:
+      - "8081:8080"
+      - "8091:8090"
+
+  httpd:
+    image: httpd:2.4
+    volumes:
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - "80:80"
+    environment:
+      TARGET_HOST1: postcode-app-1:8080
+      TARGET_HOST2: postcode-app-2:8080
 
   postgres:
     image: postgres
