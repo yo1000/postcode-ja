@@ -8,6 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -307,22 +309,25 @@ public class JdbcPostRepositoryTests {
         JdbcPostRepository repos = new JdbcPostRepository(namedJdbcOps);
 
         // When
-        List<Post> results = repos.findByCriteria(new Post(
-                null,
-                localGovCode, postcode5, postcode7,
-                prefectureName, prefectureNameKatakana,
-                municipalityName, municipalityNameKatakana,
-                townAreaName, townAreaNameKatakana,
-                isTownAreaWithMultiplePostcodes,
-                isTownAreaWithAddressNumbersPerKoaza,
-                isTownAreaWithChome,
-                isPostcodeWithMultipleTownAreas,
-                isChanged, ChangeReasons.of(changeReason),
-                1000L));
+        Page<Post> results = repos.findByCriteria(
+                new Post(
+                        null,
+                        localGovCode, postcode5, postcode7,
+                        prefectureName, prefectureNameKatakana,
+                        municipalityName, municipalityNameKatakana,
+                        townAreaName, townAreaNameKatakana,
+                        isTownAreaWithMultiplePostcodes,
+                        isTownAreaWithAddressNumbersPerKoaza,
+                        isTownAreaWithChome,
+                        isPostcodeWithMultipleTownAreas,
+                        isChanged, ChangeReasons.of(changeReason),
+                        1000L),
+                Pageable.ofSize(10));
 
         // Then
-        Assertions.assertThat(results.size()).isEqualTo(1);
-        Assertions.assertThat(results.get(0)).isEqualTo(new Post(
+        Assertions.assertThat(results.getTotalElements()).isEqualTo(1);
+        Assertions.assertThat(results.getContent().size()).isEqualTo(1);
+        Assertions.assertThat(results.getContent().get(0)).isEqualTo(new Post(
                 "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
                 "01101", "060  ", "0600000",
                 "北海道", "ホッカイドウ",

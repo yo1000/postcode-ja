@@ -4,6 +4,9 @@ import com.yo1000.postcode.domain.Post;
 import com.yo1000.postcode.domain.PostRepository;
 import com.yo1000.postcode.domain.vo.ChangeReasons;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,7 +63,7 @@ public class JdbcPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByCriteria(Post criteria) {
+    public Page<Post> findByCriteria(Post criteria, Pageable pageable) {
         StringJoiner joiner = new StringJoiner(" AND ");
         MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -142,7 +145,12 @@ public class JdbcPostRepository implements PostRepository {
         joiner.add("creation_epoch_millis = :creationEpochMillis");
         params.addValue("creationEpochMillis", criteria.creationEpochMillis());
 
-        return query(joiner.toString(), params);
+        String criteriaQuery = joiner.toString();
+
+        return new PageImpl<>(
+                query(criteriaQuery, params),
+                pageable,
+                count(criteriaQuery, params));
     }
 
     @Override
@@ -215,8 +223,23 @@ public class JdbcPostRepository implements PostRepository {
     }
 
     private List<Post> query(String criteriaQuery, SqlParameterSource criteriaParams) {
+        return query(criteriaQuery, criteriaParams,null);
+    }
+
+    private List<Post> query(String criteriaQuery, SqlParameterSource criteriaParams, Pageable pageable) {
         DefaultConversionService conversionService = new DefaultConversionService();
         conversionService.addConverter(String.class, ChangeReasons.class, ChangeReasons::of);
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        for (String name : Optional.ofNullable(criteriaParams)
+                .map(SqlParameterSource::getParameterNames).orElse(new String[0])) {
+            params.addValue(name, criteriaParams.getValue(name), criteriaParams.getSqlType(name));
+        }
+
+        if (pageable != null) {
+            params.addValue("limit", pageable.getPageSize());
+            params.addValue("offset", pageable.getOffset());
+        }
 
         return namedJdbcOps.query(
                 """
@@ -240,13 +263,34 @@ public class JdbcPostRepository implements PostRepository {
                         creation_epoch_millis
                     FROM
                         posts
-                """ + Optional
+                """
+                + Optional
+                        .ofNullable(criteriaQuery)
+                        .filter(q -> !q.isBlank())
+                        .map(q -> " WHERE " + q)
+                        .orElse("")
+                + Optional.ofNullable(pageable)
+                        .map(_ -> " LIMIT :limit OFFSET :offset ")
+                        .orElse(""),
+                params,
+                DataClassRowMapper.newInstance(Post.class, conversionService));
+    }
+
+    private int count(String criteriaQuery, SqlParameterSource criteriaParams) {
+        return namedJdbcOps.queryForObject(
+                """
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        posts
+                """
+                + Optional
                         .ofNullable(criteriaQuery)
                         .filter(q -> !q.isBlank())
                         .map(q -> " WHERE " + q)
                         .orElse(""),
                 criteriaParams,
-                DataClassRowMapper.newInstance(Post.class, conversionService));
+                Integer.class);
     }
 
     private void batchUpdate(List<SqlParameterSource> params) {
