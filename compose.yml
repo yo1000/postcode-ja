@@ -5,7 +5,19 @@ services:
       args:
         JAR: ./target/*.jar
     environment:
-      APP_RESOURCE: file:///tmp/utf_ken_all.zip
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      APP_CSV_RESOURCE: file:///tmp/utf_ken_all.zip
+      # Local only (Every 2-minutes)
+      APP_TIME_UPDATECRON: "0 */2 * * * *"
+      # Local only (60-seconds)
+      APP_TIME_WAITUNITTIMEMILLIS: 60000
+      # Local only (2-minutes)
+      APP_TIME_MINUPDATEINTERVALMILLIS: 120000
+      # Local only (5-minutes)
+      APP_TIME_NODEKEEPALIVEMILLIS: 300000
+      APP_NODE_GENERATIONS: 5
       # Only local
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
     volumes:
@@ -13,3 +25,38 @@ services:
     ports:
       - "8080:8080"
       - "8090:8090"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    command: >
+      postgres -c max_wal_size=4GB -c checkpoint_timeout=10min -c checkpoint_completion_target=0.9
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -h 127.0.0.1 -U postgres -d postgres
+      interval: 5s
+
+  dbgate:
+    image: dbgate/dbgate
+    environment:
+      CONNECTIONS: conn1
+      LABEL_conn1: postgres
+      SERVER_conn1: postgres
+      USER_conn1: postgres
+      PASSWORD_conn1: postgres
+      PORT_conn1: 5432
+      ENGINE_conn1: postgres@dbgate-plugin-postgres
+    # Local only (Drop logs)
+    command: >
+      sh -c "exec /home/dbgate-docker/entrypoint.sh > /dev/null 2>&1"
+    ports:
+      - "5480:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
