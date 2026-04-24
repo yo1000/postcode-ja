@@ -64,7 +64,11 @@ public record Post(
             Boolean isChanged,
             ChangeReasons changeReason,
             long creationEpochMillis) {
-        this(genId(localGovCode, postcode5, postcode7, prefectureName, municipalityName, townAreaName),
+        this(genId(localGovCode,
+                        postcode5, postcode7,
+                        prefectureName, prefectureNameKatakana,
+                        municipalityName, municipalityNameKatakana,
+                        townAreaName, townAreaNameKatakana),
                 localGovCode,
                 postcode5,
                 postcode7,
@@ -114,16 +118,22 @@ public record Post(
             String postcode5,
             String postcode7,
             String prefectureName,
+            String prefectureNameKatakana,
             String municipalityName,
-            String townAreaName) {
+            String municipalityNameKatakana,
+            String townAreaName,
+            String townAreaNameKatakana) {
         // Invisible separator
         StringJoiner joiner = new StringJoiner("\u001F");
         joiner.add(localGovCode)
                 .add(postcode5)
                 .add(postcode7)
                 .add(prefectureName)
+                .add(prefectureNameKatakana)
                 .add(municipalityName)
-                .add(townAreaName);
+                .add(municipalityNameKatakana)
+                .add(townAreaName)
+                .add(townAreaNameKatakana);
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
