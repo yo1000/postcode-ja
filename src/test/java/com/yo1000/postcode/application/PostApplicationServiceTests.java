@@ -23,9 +23,9 @@ import java.util.List;
 public class PostApplicationServiceTests {
     @Test
     @SuppressWarnings("unchecked")
-    void test_listByPostcode7() {
+    void test_pageByPostcode7() {
         PostRepository repos = Mockito.mock(PostRepository.class);
-        Mockito.doReturn(List.of(new Post(
+        Mockito.doReturn(new PageImpl<>(List.of(new Post(
                         "01101",
                         "060  ",
                         "0600000",
@@ -41,18 +41,20 @@ public class PostApplicationServiceTests {
                         false,
                         false,
                         ChangeReasons.NO_CHANGE,
-                        1000L)))
+                        1000L)),
+                        PageRequest.of(0, 10),
+                        1L))
                 .when(repos)
-                .findByPostcode7(Mockito.anyString());
+                .findByPostcode7(Mockito.anyString(), Mockito.any(Pageable.class));
 
         ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
                 .mock(ZippedCsvFileLoader.class);
 
         PostApplicationService service = new PostApplicationService(repos, loader);
 
-        List<Post> results = service.listByPostcode7("0600000");
+        Page<Post> results = service.pageByPostcode7("0600000", Pageable.ofSize(10));
 
-        Assertions.assertThat(results).containsExactly(new Post(
+        Assertions.assertThat(results.getContent()).containsExactly(new Post(
                         "01101",
                         "060  ",
                         "0600000",
@@ -71,14 +73,14 @@ public class PostApplicationServiceTests {
                         1000L));
 
         Mockito.verify(repos, Mockito.times(1))
-                .findByPostcode7(Mockito.eq("0600000"));
+                .findByPostcode7(Mockito.eq("0600000"), Mockito.any(Pageable.class));
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void test_listByPostcode5() {
+    void test_pageByPostcode5() {
         PostRepository repos = Mockito.mock(PostRepository.class);
-        Mockito.doReturn(List.of(new Post(
+        Mockito.doReturn(new PageImpl<>(List.of(new Post(
                         "01101",
                         "060  ",
                         "0600000",
@@ -94,18 +96,20 @@ public class PostApplicationServiceTests {
                         false,
                         false,
                         ChangeReasons.NO_CHANGE,
-                        1000L)))
+                        1000L)),
+                        PageRequest.of(0, 10),
+                        1L))
                 .when(repos)
-                .findByPostcode5(Mockito.anyString());
+                .findByPostcode5(Mockito.anyString(), Mockito.any(Pageable.class));
 
         ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
                 .mock(ZippedCsvFileLoader.class);
 
         PostApplicationService service = new PostApplicationService(repos, loader);
 
-        List<Post> results = service.listByPostcode5("060  ");
+        Page<Post> results = service.pageByPostcode5("060  ", Pageable.ofSize(10));
 
-        Assertions.assertThat(results).containsExactly(new Post(
+        Assertions.assertThat(results.getContent()).containsExactly(new Post(
                 "01101",
                 "060  ",
                 "0600000",
@@ -124,7 +128,7 @@ public class PostApplicationServiceTests {
                 1000L));
 
         Mockito.verify(repos, Mockito.times(1))
-                .findByPostcode5(Mockito.eq("060  "));
+                .findByPostcode5(Mockito.eq("060  "), Mockito.any(Pageable.class));
     }
 
     @Test

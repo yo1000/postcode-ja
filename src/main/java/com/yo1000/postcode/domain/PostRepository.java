@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostRepository {
-    List<Post> findByPostcode5(String postcode5);
-    List<Post> findByPostcode5(String postcode5, long creationEpochMillis);
-    List<Post> findByPostcode7(String postcode7);
-    List<Post> findByPostcode7(String postcode7, long creationEpochMillis);
+    Page<Post> findByPostcode5(String postcode5, Pageable pageable);
+    Page<Post> findByPostcode5(String postcode5, long creationEpochMillis, Pageable pageable);
+    Page<Post> findByPostcode7(String postcode7, Pageable pageable);
+    Page<Post> findByPostcode7(String postcode7, long creationEpochMillis, Pageable pageable);
     Page<Post> findByCriteria(Post criteria, Pageable pageable);
     List<Long> findAllCreationEpochMillis();
     List<Post> saveAll(Iterable<Post> entities);

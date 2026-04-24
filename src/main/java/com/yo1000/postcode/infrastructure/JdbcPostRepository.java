@@ -27,39 +27,50 @@ public class JdbcPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByPostcode5(String postcode5) {
+    public Page<Post> findByPostcode5(String postcode5, Pageable pageable) {
         long creationEpochMillis = findAllCreationEpochMillis().stream()
                 .mapToLong(v -> v)
                 .max()
                 .orElseThrow();
 
-        return findByPostcode5(postcode5, creationEpochMillis);
+        return findByPostcode5(postcode5, creationEpochMillis, pageable);
     }
 
     @Override
-    public List<Post> findByPostcode5(String postcode5, long creationEpochMillis) {
-        return query("postcode5 = :postcode5 AND creation_epoch_millis = :creationEpochMillis",
-                new MapSqlParameterSource()
-                        .addValue("postcode5", postcode5)
-                        .addValue("creationEpochMillis", creationEpochMillis));
+    public Page<Post> findByPostcode5(String postcode5, long creationEpochMillis, Pageable pageable) {
+        String criteriaQuery = "postcode5 = :postcode5 AND creation_epoch_millis = :creationEpochMillis";
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("postcode5", postcode5)
+                .addValue("creationEpochMillis", creationEpochMillis);
+
+        return new PageImpl<>(
+                query(criteriaQuery, params, pageable),
+                pageable,
+                count(criteriaQuery, params));
+
     }
 
     @Override
-    public List<Post> findByPostcode7(String postcode7) {
+    public Page<Post> findByPostcode7(String postcode7, Pageable pageable) {
         long creationEpochMillis = findAllCreationEpochMillis().stream()
                 .mapToLong(v -> v)
                 .max()
                 .orElseThrow();
 
-        return findByPostcode7(postcode7, creationEpochMillis);
+        return findByPostcode7(postcode7, creationEpochMillis, pageable);
     }
 
     @Override
-    public List<Post> findByPostcode7(String postcode7, long creationEpochMillis) {
-        return query("postcode7 = :postcode7 AND creation_epoch_millis = :creationEpochMillis",
-                new MapSqlParameterSource()
-                        .addValue("postcode7", postcode7)
-                        .addValue("creationEpochMillis", creationEpochMillis));
+    public Page<Post> findByPostcode7(String postcode7, long creationEpochMillis, Pageable pageable) {
+        String criteriaQuery = "postcode7 = :postcode7 AND creation_epoch_millis = :creationEpochMillis";
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("postcode7", postcode7)
+                .addValue("creationEpochMillis", creationEpochMillis);
+
+        return new PageImpl<>(
+                query(criteriaQuery, params, pageable),
+                pageable,
+                count(criteriaQuery, params));
     }
 
     @Override

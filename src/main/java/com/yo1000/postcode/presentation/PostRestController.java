@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,13 +19,18 @@ public class PostRestController {
     }
 
     @GetMapping("/{postcode7:^[0-9]{7}$}")
-    public List<Post> getByPostcode7(@PathVariable String postcode7) {
-        return postApplicationService.listByPostcode7(postcode7);
+    public Page<Post> getByPostcode7(
+            @PathVariable String postcode7,
+            Pageable pageable) {
+        return postApplicationService.pageByPostcode7(postcode7, pageable);
     }
 
     @GetMapping("/{postcode5:^[0-9-]{5}$}")
-    public List<Post> getByPostcode5(@PathVariable String postcode5) {
-        return postApplicationService.listByPostcode5(postcode5.replace('-', ' '));
+    public Page<Post> getByPostcode5(
+            @PathVariable String postcode5,
+            Pageable pageable) {
+        return postApplicationService.pageByPostcode5(
+                postcode5.replace('-', ' '), pageable);
     }
 
     @GetMapping

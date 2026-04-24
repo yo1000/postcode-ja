@@ -120,11 +120,11 @@ public class JdbcPostRepositoryTests {
         JdbcPostRepository repos = new JdbcPostRepository(namedJdbcOps);
 
         // When
-        List<Post> results = repos.findByPostcode5("060  ");
+        Page<Post> results = repos.findByPostcode5("060  ", Pageable.ofSize(10));
 
         // Then
-        Assertions.assertThat(results.size()).isEqualTo(1);
-        Assertions.assertThat(results.get(0)).isEqualTo(new Post(
+        Assertions.assertThat(results.getTotalElements()).isEqualTo(1);
+        Assertions.assertThat(results.getContent().get(0)).isEqualTo(new Post(
                 "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
                 "01101", "060  ", "0600000",
                 "北海道", "ホッカイドウ",
@@ -212,11 +212,11 @@ public class JdbcPostRepositoryTests {
         JdbcPostRepository repos = new JdbcPostRepository(namedJdbcOps);
 
         // When
-        List<Post> results = repos.findByPostcode7("0600000");
+        Page<Post> results = repos.findByPostcode7("0600000", Pageable.ofSize(10));
 
         // Then
-        Assertions.assertThat(results.size()).isEqualTo(1);
-        Assertions.assertThat(results.get(0)).isEqualTo(new Post(
+        Assertions.assertThat(results.getTotalElements()).isEqualTo(1);
+        Assertions.assertThat(results.getContent().get(0)).isEqualTo(new Post(
                 "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
                 "01101", "060  ", "0600000",
                 "北海道", "ホッカイドウ",

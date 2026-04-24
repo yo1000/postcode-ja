@@ -12,15 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebMvcTest(PostRestController.class)
@@ -35,7 +32,7 @@ public class PostRestControllerTests {
 
     @Test
     void test_getByPostcode7() {
-        Mockito.doReturn(List.of(
+        Mockito.doReturn(new PageImpl<>(List.of(
                 new Post(
                         "01101",
                         "060  ","0600000",
@@ -43,15 +40,17 @@ public class PostRestControllerTests {
                         "札幌市中央区", "サッポロシチュウオウク",
                         "以下に掲載がない場合", "イカニケイサイガナイバアイ",
                         false,false,false,false,
-                        false, ChangeReasons.NO_CHANGE, 1000L)))
+                        false, ChangeReasons.NO_CHANGE, 1000L)),
+                        PageRequest.of(0, 10),
+                        1L))
                 .when(postApp)
-                .listByPostcode7(Mockito.anyString());
+                .pageByPostcode7(Mockito.anyString(), Mockito.any(Pageable.class));
 
         mockMvc.get().uri("/posts/0600000")
                 .assertThat()
                 .hasStatusOk()
                 .bodyJson()
-                .hasPathSatisfying("$[0]", assertProvider -> {
+                .hasPathSatisfying("$.content[0]", assertProvider -> {
                     assertProvider
                             .assertThat()
                             .asMap()
@@ -71,7 +70,7 @@ public class PostRestControllerTests {
                             .containsEntry("isChanged", false)
                             .containsEntry("creationEpochMillis", 1000);
                 })
-                .hasPathSatisfying("$[0].changeReason", assertProvider -> {
+                .hasPathSatisfying("$.content[0].changeReason", assertProvider -> {
                     assertProvider
                             .assertThat()
                             .asMap()
@@ -80,13 +79,14 @@ public class PostRestControllerTests {
                 });
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(postApp, Mockito.times(1)).listByPostcode7(captor.capture());
+        Mockito.verify(postApp, Mockito.times(1))
+                .pageByPostcode7(captor.capture(), Mockito.any(Pageable.class));
         Assertions.assertThat(captor.getValue()).isEqualTo("0600000");
     }
 
     @Test
     void test_getByPostcode5() {
-        Mockito.doReturn(List.of(
+        Mockito.doReturn(new PageImpl<>(List.of(
                 new Post(
                         "01101",
                         "060  ","0600000",
@@ -94,15 +94,18 @@ public class PostRestControllerTests {
                         "札幌市中央区", "サッポロシチュウオウク",
                         "以下に掲載がない場合", "イカニケイサイガナイバアイ",
                         false,false,false,false,
-                        false, ChangeReasons.NO_CHANGE, 1000L)))
+                        false, ChangeReasons.NO_CHANGE, 1000L)),
+                        PageRequest.of(0, 10),
+                        1L)
+                )
                 .when(postApp)
-                .listByPostcode5(Mockito.anyString());
+                .pageByPostcode5(Mockito.anyString(), Mockito.any(Pageable.class));
 
         mockMvc.get().uri("/posts/060--")
                 .assertThat()
                 .hasStatusOk()
                 .bodyJson()
-                .hasPathSatisfying("$[0]", assertProvider -> {
+                .hasPathSatisfying("$.content[0]", assertProvider -> {
                     assertProvider
                             .assertThat()
                             .asMap()
@@ -122,7 +125,7 @@ public class PostRestControllerTests {
                             .containsEntry("isChanged", false)
                             .containsEntry("creationEpochMillis", 1000);
                 })
-                .hasPathSatisfying("$[0].changeReason", assertProvider -> {
+                .hasPathSatisfying("$.content[0].changeReason", assertProvider -> {
                     assertProvider
                             .assertThat()
                             .asMap()
@@ -131,12 +134,12 @@ public class PostRestControllerTests {
                 });
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(postApp, Mockito.times(1)).listByPostcode5(captor.capture());
+        Mockito.verify(postApp, Mockito.times(1))
+                .pageByPostcode5(captor.capture(), Mockito.any(Pageable.class));
         Assertions.assertThat(captor.getValue()).isEqualTo("060  ");
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void test_getByCriteria() {
         Mockito.doReturn(new PageImpl<>(
                 List.of(new Post(

@@ -26,12 +26,12 @@ public class PostApplicationService {
         this.loader = loader;
     }
 
-    public List<Post> listByPostcode7(String postcode7) {
-        return postRepos.findByPostcode7(postcode7);
+    public Page<Post> pageByPostcode7(String postcode7, Pageable pageable) {
+        return postRepos.findByPostcode7(postcode7, pageable);
     }
 
-    public List<Post> listByPostcode5(String postcode5) {
-        return postRepos.findByPostcode5(postcode5);
+    public Page<Post> pageByPostcode5(String postcode5, Pageable pageable) {
+        return postRepos.findByPostcode5(postcode5, pageable);
     }
 
     public Page<Post> pageByCriteria(Post criteria, Pageable pageable) {
