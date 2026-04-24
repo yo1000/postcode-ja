@@ -148,7 +148,7 @@ public class JdbcPostRepository implements PostRepository {
         String criteriaQuery = joiner.toString();
 
         return new PageImpl<>(
-                query(criteriaQuery, params),
+                query(criteriaQuery, params, pageable),
                 pageable,
                 count(criteriaQuery, params));
     }
@@ -267,11 +267,18 @@ public class JdbcPostRepository implements PostRepository {
                 + Optional
                         .ofNullable(criteriaQuery)
                         .filter(q -> !q.isBlank())
-                        .map(q -> " WHERE " + q)
-                        .orElse("")
+                        .map(q -> " WHERE " + q + " ")
+                        .orElse(" ")
+                + """
+                ORDER BY
+                    postcode7,
+                    prefecture_name_katakana,
+                    municipality_name_katakana,
+                    town_area_name_katakana
+                """
                 + Optional.ofNullable(pageable)
                         .map(_ -> " LIMIT :limit OFFSET :offset ")
-                        .orElse(""),
+                        .orElse(" "),
                 params,
                 DataClassRowMapper.newInstance(Post.class, conversionService));
     }
