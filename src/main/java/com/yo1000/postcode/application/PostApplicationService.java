@@ -4,6 +4,8 @@ import com.yo1000.postcode.application.port.PostCsv;
 import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
 import com.yo1000.postcode.domain.Post;
 import com.yo1000.postcode.domain.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.CloseableIterator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,25 @@ public class PostApplicationService {
     public PostApplicationService(PostRepository postRepos, ZippedCsvFileLoader<PostCsv, Post> loader) {
         this.postRepos = postRepos;
         this.loader = loader;
+    }
+
+    public List<Post> listByPostcode7(String postcode7) {
+        return postRepos.findByPostcode7(postcode7);
+    }
+
+    public List<Post> listByPostcode5(String postcode5) {
+        return postRepos.findByPostcode5(postcode5);
+    }
+
+    public Page<Post> pageByCriteria(Post criteria, Pageable pageable) {
+        long creationEpochMillis = postRepos.findAllCreationEpochMillis().stream()
+                .mapToLong(v -> v)
+                .max()
+                .orElseThrow();
+
+        return postRepos.findByCriteria(
+                criteria.updateCreationEpochMillis(creationEpochMillis),
+                pageable);
     }
 
     public void update(long execTimeInMillis) {
