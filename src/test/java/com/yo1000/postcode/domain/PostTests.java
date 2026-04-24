@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 public class PostTests {
     @Test
-    void test() {
+    void test_postcode() {
         Post post = new Post(
                 "01101",
                 "060  ","0600000",
@@ -21,5 +21,31 @@ public class PostTests {
 
         // Then
         Assertions.assertThat(postcode).isEqualTo(post.postcode7());
+    }
+
+    @Test
+    void test_updateCreationEpochMillis() {
+        Post post = new Post(
+                "01101",
+                "060  ","0600000",
+                "北海道", "ホッカイドウ",
+                "札幌市中央区", "サッポロシチュウオウク",
+                "以下に掲載がない場合", "イカニケイサイガナイバアイ",
+                false,false,false,false,
+                false, ChangeReasons.NO_CHANGE, 1000L);
+
+        // When
+        Post newPost = post.updateCreationEpochMillis(2000L);
+
+        // Then
+        Assertions.assertThat(newPost).isNotSameAs(post);
+        Assertions.assertThat(newPost).isEqualTo(new Post(
+                "01101",
+                "060  ","0600000",
+                "北海道", "ホッカイドウ",
+                "札幌市中央区", "サッポロシチュウオウク",
+                "以下に掲載がない場合", "イカニケイサイガナイバアイ",
+                false,false,false,false,
+                false, ChangeReasons.NO_CHANGE, 2000L));
     }
 }

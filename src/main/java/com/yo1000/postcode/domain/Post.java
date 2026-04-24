@@ -83,6 +83,26 @@ public record Post(
                 creationEpochMillis);
     }
 
+    public Post updateCreationEpochMillis(long creationEpochMillis) {
+        return new Post(
+                localGovCode(),
+                postcode5(),
+                postcode7(),
+                prefectureName(),
+                prefectureNameKatakana(),
+                municipalityName(),
+                municipalityNameKatakana(),
+                townAreaName(),
+                townAreaNameKatakana(),
+                isTownAreaWithMultiplePostcodes(),
+                isTownAreaWithAddressNumbersPerKoaza(),
+                isTownAreaWithChome(),
+                isPostcodeWithMultipleTownAreas(),
+                isChanged(),
+                changeReason(),
+                creationEpochMillis);
+    }
+
     /** 郵便番号（7桁）のエイリアス */
     @JsonIgnore
     public String postcode() {
