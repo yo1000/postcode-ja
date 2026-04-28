@@ -1,7 +1,7 @@
 package com.yo1000.postcode.application;
 
 import com.yo1000.postcode.application.port.PostCsv;
-import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
+import com.yo1000.postcode.application.port.RowsetLoader;
 import com.yo1000.postcode.domain.Post;
 import com.yo1000.postcode.domain.PostRepository;
 import org.springframework.data.domain.Page;
@@ -19,9 +19,9 @@ import java.util.stream.StreamSupport;
 @Transactional
 public class PostApplicationService {
     private final PostRepository postRepos;
-    private final ZippedCsvFileLoader<PostCsv, Post> loader;
+    private final RowsetLoader<PostCsv, Post> loader;
 
-    public PostApplicationService(PostRepository postRepos, ZippedCsvFileLoader<PostCsv, Post> loader) {
+    public PostApplicationService(PostRepository postRepos, RowsetLoader<PostCsv, Post> loader) {
         this.postRepos = postRepos;
         this.loader = loader;
     }

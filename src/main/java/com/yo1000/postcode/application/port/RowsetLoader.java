@@ -4,7 +4,7 @@ import org.springframework.data.util.CloseableIterator;
 
 import java.io.IOException;
 
-public interface ZippedCsvFileLoader<T, R> {
+public interface RowsetLoader<T, R> {
     interface RowHandler<T, R> {
         R handle(T row);
     }

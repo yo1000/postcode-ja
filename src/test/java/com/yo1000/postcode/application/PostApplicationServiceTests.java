@@ -1,7 +1,7 @@
 package com.yo1000.postcode.application;
 
 import com.yo1000.postcode.application.port.PostCsv;
-import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
+import com.yo1000.postcode.application.port.RowsetLoader;
 import com.yo1000.postcode.domain.Post;
 import com.yo1000.postcode.domain.PostRepository;
 import com.yo1000.postcode.domain.vo.ChangeReasons;
@@ -47,8 +47,8 @@ public class PostApplicationServiceTests {
                 .when(repos)
                 .findByPostcode7(Mockito.anyString(), Mockito.any(Pageable.class));
 
-        ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
-                .mock(ZippedCsvFileLoader.class);
+        RowsetLoader<PostCsv, Post> loader = (RowsetLoader<PostCsv, Post>) Mockito
+                .mock(RowsetLoader.class);
 
         PostApplicationService service = new PostApplicationService(repos, loader);
 
@@ -102,8 +102,8 @@ public class PostApplicationServiceTests {
                 .when(repos)
                 .findByPostcode5(Mockito.anyString(), Mockito.any(Pageable.class));
 
-        ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
-                .mock(ZippedCsvFileLoader.class);
+        RowsetLoader<PostCsv, Post> loader = (RowsetLoader<PostCsv, Post>) Mockito
+                .mock(RowsetLoader.class);
 
         PostApplicationService service = new PostApplicationService(repos, loader);
 
@@ -161,8 +161,8 @@ public class PostApplicationServiceTests {
                 .when(repos)
                 .findByCriteria(Mockito.any(Post.class), Mockito.any(Pageable.class));
 
-        ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
-                .mock(ZippedCsvFileLoader.class);
+        RowsetLoader<PostCsv, Post> loader = (RowsetLoader<PostCsv, Post>) Mockito
+                .mock(RowsetLoader.class);
 
         PostApplicationService service = new PostApplicationService(repos, loader);
 
@@ -237,8 +237,8 @@ public class PostApplicationServiceTests {
                 .when(repos)
                 .saveAll(Mockito.anyIterable());
 
-        ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
-                .mock(ZippedCsvFileLoader.class);
+        RowsetLoader<PostCsv, Post> loader = (RowsetLoader<PostCsv, Post>) Mockito
+                .mock(RowsetLoader.class);
         Mockito.doReturn((CloseableIterator<Post>) Mockito.mock(CloseableIterator.class))
                 .when(loader)
                 .load(Mockito.any());
@@ -259,8 +259,8 @@ public class PostApplicationServiceTests {
                 .when(repos)
                 .saveAll(Mockito.anyIterable());
 
-        ZippedCsvFileLoader<PostCsv, Post> loader = (ZippedCsvFileLoader<PostCsv, Post>) Mockito
-                .mock(ZippedCsvFileLoader.class);
+        RowsetLoader<PostCsv, Post> loader = (RowsetLoader<PostCsv, Post>) Mockito
+                .mock(RowsetLoader.class);
         Mockito.doThrow(new IOException())
                 .when(loader)
                 .load(Mockito.any());
@@ -286,7 +286,7 @@ public class PostApplicationServiceTests {
                 .deleteAllByCreationEpochMillis(Mockito.anyIterable());
 
         PostApplicationService service = new PostApplicationService(
-                repos, (ZippedCsvFileLoader<PostCsv, Post>) Mockito.mock(ZippedCsvFileLoader.class));
+                repos, (RowsetLoader<PostCsv, Post>) Mockito.mock(RowsetLoader.class));
 
         service.delete(2);
 
@@ -309,7 +309,7 @@ public class PostApplicationServiceTests {
                 .deleteAllByCreationEpochMillis(Mockito.anyIterable());
 
         PostApplicationService service = new PostApplicationService(
-                repos, (ZippedCsvFileLoader<PostCsv, Post>) Mockito.mock(ZippedCsvFileLoader.class));
+                repos, (RowsetLoader<PostCsv, Post>) Mockito.mock(RowsetLoader.class));
 
         service.delete(3);
 

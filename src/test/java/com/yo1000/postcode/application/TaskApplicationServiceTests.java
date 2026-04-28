@@ -1,7 +1,7 @@
 package com.yo1000.postcode.application;
 
 import com.yo1000.postcode.application.port.PostCsv;
-import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
+import com.yo1000.postcode.application.port.RowsetLoader;
 import com.yo1000.postcode.config.NodeProperties;
 import com.yo1000.postcode.config.TimeProperties;
 import com.yo1000.postcode.domain.NodeRepository;
@@ -28,7 +28,7 @@ public class TaskApplicationServiceTests {
 
         PostApplicationService postApp = Mockito.spy(new PostApplicationService(
                 Mockito.mock(PostRepository.class),
-                (ZippedCsvFileLoader<PostCsv, Post>) Mockito.mock(ZippedCsvFileLoader.class)));
+                (RowsetLoader<PostCsv, Post>) Mockito.mock(RowsetLoader.class)));
         Mockito.doAnswer(_ -> null)
                 .when(postApp)
                 .update(Mockito.anyLong());
@@ -97,7 +97,7 @@ public class TaskApplicationServiceTests {
 
         PostApplicationService postApp = Mockito.spy(new PostApplicationService(
                 Mockito.mock(PostRepository.class),
-                (ZippedCsvFileLoader<PostCsv, Post>) Mockito.mock(ZippedCsvFileLoader.class)));
+                (RowsetLoader<PostCsv, Post>) Mockito.mock(RowsetLoader.class)));
         Mockito.doAnswer(_ -> null)
                 .when(postApp)
                 .update(Mockito.anyLong());

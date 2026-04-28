@@ -3,7 +3,7 @@ package com.yo1000.postcode.infrastructure;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yo1000.postcode.application.port.PostCsv;
-import com.yo1000.postcode.application.port.ZippedCsvFileLoader;
+import com.yo1000.postcode.application.port.RowsetLoader;
 import com.yo1000.postcode.config.CsvProperties;
 import org.springframework.data.util.CloseableIterator;
 import org.springframework.stereotype.Repository;
@@ -14,11 +14,11 @@ import java.util.Stack;
 import java.util.zip.ZipInputStream;
 
 @Repository
-public class ResourceZippedCsvFileLoader<T, R> implements ZippedCsvFileLoader<T, R> {
+public class ZippedCsvResourceRowsetLoader<T, R> implements RowsetLoader<T, R> {
     private final CsvProperties csvProps;
     private final ObjectMapper csvMapper;
 
-    public ResourceZippedCsvFileLoader(CsvProperties csvProps, ObjectMapper csvMapper) {
+    public ZippedCsvResourceRowsetLoader(CsvProperties csvProps, ObjectMapper csvMapper) {
         this.csvProps = csvProps;
         this.csvMapper = csvMapper;
     }
