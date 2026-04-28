@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class ZippedCsvResourceRowsetLoaderTests {
+public class ZippedPostCsvResourceRowsetLoaderTests {
     @Test
     void test_load() throws IOException {
         // Given
@@ -51,7 +51,7 @@ public class ZippedCsvResourceRowsetLoaderTests {
         ObjectMapper csvMapper = new CsvMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        ZippedCsvResourceRowsetLoader<PostCsv, PostCsv> loader = new ZippedCsvResourceRowsetLoader<>(csvProps, csvMapper);
+        ZippedPostCsvResourceRowsetLoader<PostCsv> loader = new ZippedPostCsvResourceRowsetLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {
@@ -139,7 +139,7 @@ public class ZippedCsvResourceRowsetLoaderTests {
         ObjectMapper csvMapper = new CsvMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        ZippedCsvResourceRowsetLoader<PostCsv, PostCsv> loader = new ZippedCsvResourceRowsetLoader<>(csvProps, csvMapper);
+        ZippedPostCsvResourceRowsetLoader<PostCsv> loader = new ZippedPostCsvResourceRowsetLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {
@@ -198,7 +198,7 @@ public class ZippedCsvResourceRowsetLoaderTests {
         ObjectMapper csvMapper = new CsvMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        ZippedCsvResourceRowsetLoader<PostCsv, PostCsv> loader = new ZippedCsvResourceRowsetLoader<>(csvProps, csvMapper);
+        ZippedPostCsvResourceRowsetLoader<PostCsv> loader = new ZippedPostCsvResourceRowsetLoader<>(csvProps, csvMapper);
 
         // When
         try (CloseableIterator<PostCsv> iter = loader.load(row -> row)) {

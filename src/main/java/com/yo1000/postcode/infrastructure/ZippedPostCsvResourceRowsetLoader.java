@@ -14,17 +14,17 @@ import java.util.Stack;
 import java.util.zip.ZipInputStream;
 
 @Repository
-public class ZippedCsvResourceRowsetLoader<T, R> implements RowsetLoader<T, R> {
+public class ZippedPostCsvResourceRowsetLoader<R> implements RowsetLoader<PostCsv, R> {
     private final CsvProperties csvProps;
     private final ObjectMapper csvMapper;
 
-    public ZippedCsvResourceRowsetLoader(CsvProperties csvProps, ObjectMapper csvMapper) {
+    public ZippedPostCsvResourceRowsetLoader(CsvProperties csvProps, ObjectMapper csvMapper) {
         this.csvProps = csvProps;
         this.csvMapper = csvMapper;
     }
 
     @Override
-    public CloseableIterator<R> load(RowHandler<T, R> handler) throws IOException {
+    public CloseableIterator<R> load(RowHandler<PostCsv, R> handler) throws IOException {
         CloseableStack closeableStack = new CloseableStack();
 
         if (csvProps.getResource() == null || !csvProps.getResource().exists()) {
@@ -38,7 +38,7 @@ public class ZippedCsvResourceRowsetLoader<T, R> implements RowsetLoader<T, R> {
         InputStreamReader inReader = closeableStack.pushCloseable(new InputStreamReader(zipIn, StandardCharsets.UTF_8));
         BufferedReader bufReader = closeableStack.pushCloseable(new BufferedReader(inReader));
 
-        MappingIterator<T> iter = closeableStack.pushCloseable(csvMapper
+        MappingIterator<PostCsv> iter = closeableStack.pushCloseable(csvMapper
                 .readerFor(PostCsv.class)
                 .with(PostCsv.SCHEMA)
                 .readValues(bufReader));
