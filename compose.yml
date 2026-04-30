@@ -2,6 +2,8 @@ x-app-environment: &app-environment
   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
   SPRING_DATASOURCE_USERNAME: postgres
   SPRING_DATASOURCE_PASSWORD: postgres
+  # Local only (Swagger UI)
+  SPRINGDOC_APIDOCS_ENABLED: true
   APP_CSV_RESOURCE: file:///tmp/utf_ken_all.zip
   # Production only
   #APP_CSV_RESOURCE: https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
